@@ -2,6 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>This app needs access to your documents to let you share files in chat.</string>
+    
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>This app needs access to your downloads folder to access downloaded files.</string>
+
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs access to your camera to let you take photos for chat messages.</string>
+    
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to your photo library to let you share images in chat.</string>
+    
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>This app needs permission to save photos to your photo library.</string>
+
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>

@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import {
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -102,7 +103,7 @@ export default function Index() {
       end={{ x: 1, y: 1 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
         <Image style={styles.logo}
           source={require('../assets/images/jondaxicon.png')}
         />
@@ -114,104 +115,104 @@ export default function Index() {
 
         <View style={styles.content}>
           <View style={styles.buttonContainer}>
-            {/*upload form gallery button*/}
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => userUploadImage(true)}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
+              {/*upload form gallery button*/}
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => userUploadImage(true)}
+                activeOpacity={0.8}
               >
-                <View style={styles.buttonContent}>
-                  <Ionicons name="image" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Upload from Gallery
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Select health images from your device
-                  </Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
+                <LinearGradient
+                  colors={['#e91e63', '#ad1457']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.buttonGradient}
+                >
+                  <View style={styles.buttonContent}>
+                    <Ionicons name="image" size={24} color="white" />
+                    <Text style={styles.buttonText}>
+                      Upload from Gallery
+                    </Text>
+                    <Text style={styles.buttonSubtext}>
+                      Select health images from your device
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => userUploadImage(false)}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => userUploadImage(false)}
+                activeOpacity={0.8}
               >
-                <View style={styles.buttonContent}>
-                  <Ionicons name="camera" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Capture & Upload
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Take a photo of your health data
-                  </Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
+                <LinearGradient
+                  colors={['#e91e63', '#ad1457']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.buttonGradient}
+                >
+                  <View style={styles.buttonContent}>
+                    <Ionicons name="camera" size={24} color="white" />
+                    <Text style={styles.buttonText}>
+                      Capture & Upload
+                    </Text>
+                    <Text style={styles.buttonSubtext}>
+                      Take a photo of your health data
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={pickAndUploadDocument}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={pickAndUploadDocument}
+                activeOpacity={0.8}
               >
-                <View style={styles.buttonContent}>
-                  <Ionicons name="document-text" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Upload Document
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Import medical records & reports
-                  </Text>
-                </View>
+                <LinearGradient
+                  colors={['#e91e63', '#ad1457']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.buttonGradient}
+                >
+                  <View style={styles.buttonContent}>
+                    <Ionicons name="document-text" size={24} color="white" />
+                    <Text style={styles.buttonText}>
+                      Upload Document
+                    </Text>
+                    <Text style={styles.buttonSubtext}>
+                      Import medical records & reports
+                    </Text>
+                  </View>
 
-              </LinearGradient>
+                </LinearGradient>
 
-            </TouchableOpacity>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={routeToChatBot}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={routeToChatBot}
+                activeOpacity={0.8}
               >
-                <View style={styles.buttonContent}>
-                  <Octicons name="dependabot" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Chat with us
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Get more out of JondaX with our AI agent
-                  </Text>
-                </View>
+                <LinearGradient
+                  colors={['#e91e63', '#ad1457']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.buttonGradient}
+                >
+                  <View style={styles.buttonContent}>
+                    <Octicons name="dependabot" size={24} color="white" />
+                    <Text style={styles.buttonText}>
+                      Chat with us
+                    </Text>
+                    <Text style={styles.buttonSubtext}>
+                      Get more out of JondaX with our AI agent
+                    </Text>
+                  </View>
 
-              </LinearGradient>
+                </LinearGradient>
 
-            </TouchableOpacity>
+              </TouchableOpacity>
 
-          </View>
+            </View>
         </View>
       </SafeAreaView>
     </LinearGradient>
@@ -226,6 +227,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+    paddingBottom: Platform.OS === 'android' ? 20 : 0,
   },
   gradient: {
     flex: 1,
@@ -251,11 +253,16 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: 20,
   },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingTop: 20,
+    paddingBottom: Platform.OS === 'android' ? 60 : 40,
+  },
   buttonContainer: {
-    gap:20,
+    gap: Platform.OS === 'android' ? 16 : 20,
   },
   actionButton: {
     borderRadius: 16,
@@ -270,7 +277,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   buttonGradient: {
-    paddingVertical: 15,
+    paddingVertical: Platform.OS === 'android' ? 12 : 15,
     paddingHorizontal: 24,
   },
   buttonContent: {

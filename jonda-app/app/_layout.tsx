@@ -12,7 +12,7 @@ export default function RootLayout() {
         >
         <Stack.Screen name="index" options={{title: 'Home', headerShown: false}} />
         <Stack.Screen name="record" options={{title: 'Record', headerShown: false}} />
-        {/* <Stack.Screen name="chatbot" options={{title: 'Chatbot', headerShown: false}} /> */}
+        <Stack.Screen name="chatbot" options={{title: 'Chatbot', headerShown: false}} />
       </Stack>
   )
 }
