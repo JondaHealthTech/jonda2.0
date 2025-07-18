@@ -1,4 +1,6 @@
+import { StripeProvider } from '@stripe/stripe-react-native';
 import { Stack } from 'expo-router';
+import { useEffect, useState } from 'react';
 
 /**
  * Root Layout Component
@@ -12,45 +14,52 @@ import { Stack } from 'expo-router';
  * // No manual instantiation required
  */
 export default function RootLayout() {
+  const [publishableKey, setPublishableKey] = useState('');
+
+  const fetchPublishableKey = async (): Promise<void> => {
+    try {
+      const response = await fetch('https://morrison-cu-fu-ruling.trycloudflare.com/config', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch publishable key');
+      }
+
+      const data = await response.json();
+      console.log('Publishable key fetched:', data.publishableKey);
+      setPublishableKey(data.publishableKey);
+    } catch (error) {
+      console.error('Error fetching publishable key:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPublishableKey();
+  }, []);
+
   return (
-    <Stack
-      screenOptions={{
-        // Enable swipe gestures for navigation
-        gestureEnabled: true,
-        // Set swipe direction to horizontal (left/right)
-        gestureDirection: 'horizontal',
-        // Use slide animation from right when navigating between screens
-        animation: 'slide_from_right',
-      }}
-    >
-      {/* Home Screen - Main landing page with upload options */}
-      <Stack.Screen 
-        name="index" 
-        options={{
-          title: 'Home',
-          headerShown: false  // Hide header for custom gradient background
-        }} 
-      />
-      
-      {/* Record Screen - Displayed after successful file upload */}
-      <Stack.Screen 
-        name="record" 
-        options={{
-          title: 'Record',
-          headerShown: false  // Hide header for consistent UI
-        }} 
-      />
-      
-      {/* Chatbot Screen - AI assistant interface */}
-      <Stack.Screen 
-        name="chatbot" 
-        options={{
-          title: 'Chatbot',
-          headerShown: false  // Hide header for immersive chat experience
-        }} 
-      />
-    </Stack>
-  );
+    <StripeProvider
+      publishableKey={publishableKey}
+      urlScheme="jondaapp"
+      >
+      <Stack
+        screenOptions={{
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
+            animation: 'slide_from_right',
+        }}
+        >
+        <Stack.Screen name="chatbot" options={{title: 'Chatbot', headerShown: false}} />
+        <Stack.Screen name="index" options={{title: 'Index', headerShown: false}} />
+        <Stack.Screen name="record" options={{title: 'Record', headerShown: false}} />
+        <Stack.Screen name="payment" options={{title: 'Payment', headerShown: false}} />
+      </Stack>
+    </StripeProvider>
+  )
 }
 
 /**
