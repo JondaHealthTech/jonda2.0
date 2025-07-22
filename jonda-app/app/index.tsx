@@ -15,12 +15,22 @@ import {
 
 const { width, height } = Dimensions.get('window');
 
+/**
+ * Login Component
+ * 
+ * @description Authentication screen with username/password inputs, loading states,
+ * and navigation to home screen. Features gradient background, heart logo branding,
+ * password visibility toggle, and form validation with loading indicators.
+ */
 export default function Login() {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  /**
+   * @description Handles login authentication with 1-second loading delay and navigation to home
+   */
   const handleLogin = async () => {
     if (username.trim() !== '' && password.trim() !== '') {
       setIsLoading(true);
@@ -34,6 +44,10 @@ export default function Login() {
     }
   };
 
+  /**
+   * @description Determines if login button should be disabled based on form state
+   * @returns {boolean} True if login should be disabled
+   */
   const isLoginDisabled = (): boolean => {
     return !username.trim() || !password.trim() || isLoading;
   };
@@ -141,6 +155,17 @@ export default function Login() {
   );
 };
 
+/**
+ * Styles for the Login component
+ * 
+ * @description Defines the visual styling for the login screen including:
+ * - Full-screen gradient background with Jonda brand colors
+ * - Centered form layout with semi-transparent input fields
+ * - Heart logo with dot overlay for brand identity
+ * - Interactive button states with loading indicators
+ * - Password visibility toggle and form validation styling
+ * - Bottom decorative wave element for visual appeal
+ */
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,

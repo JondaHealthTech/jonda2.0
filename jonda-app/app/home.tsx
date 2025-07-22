@@ -16,16 +16,29 @@ import {
 } from 'react-native';
 import { uploadDocument, uploadImage } from "../rest/requester";
 
+/**
+ * Home Component
+ * 
+ * @description Main app screen that provides document/image upload functionality,
+ * Stripe payment integration, and navigation to other app features like chatbot.
+ * Features upload progress indicators and full-screen loading overlays.
+ */
 export default function Home() {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
     const [uploadingDocument, setUploadingDocument] = useState(false);
     
+    /**
+     * @description Initialize payment sheet when component mounts
+     */
     useEffect(() => {
         initializePaymentSheet();
     }, []);
 
+    /**
+     * @description Fetches payment intent parameters from backend API for Stripe payment sheet
+     */
     const fetchPaymentSheetParams = async () => {
         try {
             const response = await fetch('https://tested-expenses-compliance-september.trycloudflare.com/create-payment-intent', {
@@ -47,6 +60,9 @@ export default function Home() {
         }
     };
     
+    /**
+     * @description Initializes Stripe payment sheet with client secret and configuration
+     */
     const initializePaymentSheet = async () => {
         try {
             const clientSecret = await fetchPaymentSheetParams();
@@ -77,6 +93,9 @@ export default function Home() {
         }
     };
     
+    /**
+     * @description Opens Stripe payment sheet for user to complete payment
+     */
     const openPaymentSheet = async () => {
         const { error } = await presentPaymentSheet();
 
@@ -88,6 +107,10 @@ export default function Home() {
         initializePaymentSheet();
     };
 
+    /**
+     * @description Handles image selection from library or camera, uploads to server, and navigates to record page
+     * @param {boolean} fromLibrary - True for library selection, false for camera capture
+     */
     const userUploadImage = async (fromLibrary = true) => {
         try {
             let result = null
@@ -134,6 +157,9 @@ export default function Home() {
         }
     }
 
+    /**
+     * @description Handles document selection from device, uploads to server, and navigates to record page
+     */
     const pickAndUploadDocument = async () => {
         try {
             const result = await DocumentPicker.getDocumentAsync({
@@ -172,6 +198,9 @@ export default function Home() {
         }
     }
 
+    /**
+     * @description Navigates to chatbot screen
+     */
     const routeToChatBot = () => {
         router.push('./chatbot')
     }
@@ -316,6 +345,16 @@ export default function Home() {
   );
 };
 
+/**
+ * Styles for the Home component
+ * 
+ * @description Defines the visual styling and layout for the home screen including:
+ * - Gradient header with document icon and exit button
+ * - Upload buttons with disabled states and loading indicators
+ * - Floating chatbot button and subscription payment section
+ * - Full-screen loading overlay for upload operations
+ * - Responsive button layouts and visual feedback states
+ */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
