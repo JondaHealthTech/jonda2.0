@@ -41,7 +41,7 @@ export default function Record() {
         <View style={styles.container}>
             {/* Main gradient background matching app theme */}
             <LinearGradient 
-                colors={['#00bcd4', '#3949ab', '#1a237e']}
+                colors={['#E879F9', '#EC4899', '#A855F7']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradient}>

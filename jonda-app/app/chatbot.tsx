@@ -23,6 +23,8 @@ const { width } = Dimensions.get('window');
 
 /**
  * Interface defining the structure of a chat message
+ * 
+ * @description Defines the shape of message objects used throughout the chat interface
  */
 interface Message {
     id: number;
@@ -35,7 +37,7 @@ interface Message {
 /**
  * Chatbot Component
  * 
- * A comprehensive chat interface that supports both text and voice messaging.
+ * @description A comprehensive chat interface that supports both text and voice messaging.
  * Features include speech recognition, message timestamps, and animated gradients.
  * 
  * @component
@@ -74,7 +76,7 @@ export default function Chatbot() {
     const speechMessageId = useRef<number>(0);
 
     /**
-     * Generates the next unique message ID
+     * @description Generates the next unique message ID
      * @returns {number} Next available message ID
      */
     const getNextMessageId = (): number => {
@@ -86,8 +88,7 @@ export default function Chatbot() {
     // Speech recognition event handlers
     
     /**
-     * Handles speech recognition start event
-     * Sets recognizing state to true
+     * @description Handles speech recognition start event. Sets recognizing state to true
      */
     useSpeechRecognitionEvent("start", () => {
         console.log('Speech recognition started');
@@ -95,8 +96,7 @@ export default function Chatbot() {
     });
 
     /**
-     * Handles speech recognition end event
-     * Resets states and triggers bot response
+     * @description Handles speech recognition end event. Resets states and triggers bot response
      */
     useSpeechRecognitionEvent("end", async () => {
         console.log('Speech recognition ended');
@@ -106,8 +106,7 @@ export default function Chatbot() {
     });
 
     /**
-     * Handles speech recognition results
-     * Creates or updates voice messages based on transcription
+     * @description Handles speech recognition results. Creates or updates voice messages based on transcription
      */
     useSpeechRecognitionEvent("result", (event) => {
         console.log('Speech results:', event);
@@ -132,8 +131,7 @@ export default function Chatbot() {
     });
 
     /**
-     * Handles speech recognition errors
-     * Resets recognition state on error
+     * @description Handles speech recognition errors. Resets recognition state on error
      */
     useSpeechRecognitionEvent("error", (event) => {
         console.error('Speech recognition error:', event.error, event.message);
@@ -142,7 +140,7 @@ export default function Chatbot() {
     });
 
     /**
-     * Edits an existing message with new text
+     * @description Edits an existing message with new text
      * @param {number} messageId - ID of message to edit
      * @param {string} newText - New text content
      */
@@ -158,8 +156,7 @@ export default function Chatbot() {
     };
 
     /**
-     * Sends a text message from user input
-     * Clears input field and triggers bot response
+     * @description Sends a text message from user input. Clears input field and triggers bot response
      */
     const sendTextMessage = async () => {
         if (inputText.trim()) {
@@ -180,8 +177,7 @@ export default function Chatbot() {
     };
 
     /**
-     * Initiates speech recognition
-     * Requests permissions and starts listening
+     * @description Initiates speech recognition. Requests permissions and starts listening
      */
     const startListening = async () => {
         console.log('Starting voice recognition...');
@@ -204,7 +200,7 @@ export default function Chatbot() {
     };
 
     /**
-     * Stops speech recognition
+     * @description Stops speech recognition
      */
     const stopListening = async () => {
         try {
@@ -215,7 +211,7 @@ export default function Chatbot() {
     };
 
     /**
-     * Creates a voice message from speech transcript
+     * @description Creates a voice message from speech transcript
      * @param {string} transcript - Speech-to-text result
      * @returns {number} Message ID or 0 if failed
      */
@@ -238,8 +234,7 @@ export default function Chatbot() {
     };
 
     /**
-     * Fetches and displays bot response
-     * Currently uses dad joke API as placeholder
+     * @description Fetches and displays bot response. Currently uses dad joke API as placeholder
      */
     const getBotResponse = async () => {
         try {
@@ -260,7 +255,7 @@ export default function Chatbot() {
     };
 
     /**
-     * Scrolls chat to bottom (most recent messages)
+     * @description Scrolls chat to bottom (most recent messages)
      */
     const scrollToBottom = (): void => {
         setTimeout(() => {
@@ -269,7 +264,7 @@ export default function Chatbot() {
     };
 
     /**
-     * Formats timestamp for display
+     * @description Formats timestamp for display
      * @param {string} timestamp - ISO timestamp string
      * @returns {string} Formatted time string (HH:MM)
      */
@@ -279,8 +274,7 @@ export default function Chatbot() {
     };
 
     /**
-     * Renders individual message bubbles
-     * Handles both text and voice message types
+     * @description Renders individual message bubbles. Handles both text and voice message types
      */
     const renderMessage: ListRenderItem<Message> = ({ item }) => {
         const isMe = item.sender === 'me';
@@ -288,7 +282,7 @@ export default function Chatbot() {
         return (
             <View style={[styles.messageContainer, isMe ? styles.myMessage : styles.otherMessage]}>
                 <LinearGradient
-                    colors={isMe ? ['#e91e63', '#ad1457'] : ['#9c27b0', '#6a1b9a']}
+                    colors={isMe ? ['rgba(255,255,255,0.5)', 'rgba(255,255,255,0.75)', 'rgba(255,255,255,1)'] : ['rgba(248,250,252,1)', 'rgba(241,245,249,0.75)', 'rgba(226,232,240,0.5)']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.messageBubble}
@@ -330,7 +324,7 @@ export default function Chatbot() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <LinearGradient
-                colors={['#1a237e', '#3949ab', '#00bcd4']}
+                colors={['#E879F9', '#EC4899', '#A855F7']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradient}
@@ -384,7 +378,7 @@ export default function Chatbot() {
 /**
  * Styles for the Chatbot component
  * 
- * Layout Structure:
+ * @description Layout Structure:
  * - Container: Full screen with gradient background
  * - Messages: Inverted FlatList for chat-like experience
  * - Input: Fixed bottom container with text input and action button
@@ -433,13 +427,13 @@ const styles = StyleSheet.create({
     messageText: {
         fontSize: 16,
         lineHeight: 20,
-        color: 'white',
+        color: 'black',
         marginBottom: 4,
     },
     timestamp: {
         fontSize: 12,
         alignSelf: 'flex-end',
-        color: 'rgba(255, 255, 255, 0.7)',
+        color: 'black',
         marginTop: 4,
     },
     messagesList: {
@@ -470,7 +464,7 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         borderRadius: 20,
-        backgroundColor: '#007AFF',
+        backgroundColor: '#000000',
         alignItems: 'center',
         justifyContent: 'center',
     },

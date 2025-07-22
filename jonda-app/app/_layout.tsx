@@ -1,3 +1,10 @@
+/**
+ * Root Layout Component
+ * 
+ * @description This component defines the main navigation structure and screen transitions
+ * for the application using Expo Router's Stack navigator.
+ */
+
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -5,7 +12,7 @@ import { useEffect, useState } from 'react';
 /**
  * Root Layout Component
  * 
- * This component defines the main navigation structure and screen transitions
+ * @description This component defines the main navigation structure and screen transitions
  * for the application using Expo Router's Stack navigator.
  * 
  * @component
@@ -16,9 +23,12 @@ import { useEffect, useState } from 'react';
 export default function RootLayout() {
   const [publishableKey, setPublishableKey] = useState('');
 
+  /**
+   * @description Fetches Stripe publishable key from backend API (server with Stripe keys) to initialize payment provider
+   */
   const fetchPublishableKey = async (): Promise<void> => {
     try {
-      const response = await fetch('https://morrison-cu-fu-ruling.trycloudflare.com/config', {
+      const response = await fetch('https://tested-expenses-compliance-september.trycloudflare.com/config', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -37,6 +47,9 @@ export default function RootLayout() {
     }
   };
 
+  /**
+   * @description Initialize Stripe configuration on component mount
+   */
   useEffect(() => {
     fetchPublishableKey();
   }, []);
@@ -46,17 +59,17 @@ export default function RootLayout() {
       publishableKey={publishableKey}
       urlScheme="jondaapp"
       >
-      <Stack
+      <Stack initialRouteName="index"
         screenOptions={{
             gestureEnabled: true,
             gestureDirection: 'horizontal',
             animation: 'slide_from_right',
         }}
         >
-        <Stack.Screen name="chatbot" options={{title: 'Chatbot', headerShown: false}} />
         <Stack.Screen name="index" options={{title: 'Index', headerShown: false}} />
+        <Stack.Screen name="chatbot" options={{title: 'Chatbot', headerShown: false}} />
+        <Stack.Screen name="home" options={{title: 'Home', headerShown: false}} />
         <Stack.Screen name="record" options={{title: 'Record', headerShown: false}} />
-        <Stack.Screen name="payment" options={{title: 'Payment', headerShown: false}} />
       </Stack>
     </StripeProvider>
   )

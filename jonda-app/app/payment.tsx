@@ -24,7 +24,7 @@ export default function PaymentScreen() {
                 'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                amount: 2000, // $20.00
+                amount: 999, // $9.99
                 currency: 'sgd',
                 }),
             });
@@ -47,12 +47,12 @@ export default function PaymentScreen() {
                 allowsDelayedPaymentMethods: true,
                 returnURL: 'jondaapp://payment',
                 defaultBillingDetails: {
-                    name: 'Guest Customer', // Optional default name
+                    name: 'Guest Customer',
                 },
                 style: 'alwaysDark',
                 googlePay: {
                     merchantCountryCode: 'SG',
-                    testEnv: true, // use test environment
+                    testEnv: true,
                 },
             });
 

@@ -1,339 +1,291 @@
-import { Ionicons, Octicons } from '@expo/vector-icons';
-import * as DocumentPicker from "expo-document-picker";
-import { Image } from 'expo-image';
-import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import React, { useState } from 'react';
 import {
-  StatusBar,
+  ActivityIndicator,
+  Dimensions,
+  SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { uploadDocument, uploadImage } from "../rest/requester"; // Adjust the import path as necessary
 
-export default function Index() {
-  const userUploadImage = async (fromLibrary = true) => {
-    try {
-      let result = null
-      if (fromLibrary) {
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-        result = await ImagePicker.launchImageLibraryAsync({
-          allowsEditing: true,
-        });
-      } else {
-        await ImagePicker.requestCameraPermissionsAsync();
-          result = await ImagePicker.launchCameraAsync({
-          allowsEditing: true,
-        });
-      }
+const { width, height } = Dimensions.get('window');
 
-      if (!result.canceled) {
-        console.log("Image selected:", result.assets[0].uri);
-        if (result.assets.length > 0) {
-          const asset = result.assets[0];
+export default function Login() {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-          try {
-            const response = await uploadImage(
-              asset.uri, 
-              asset.type ?? 'image/jpeg', 
-              asset.fileName ?? 'upload.jpg'
-            );
-            console.log("Upload successful:", response);
-
-            //routing done here upon succesful upload
-            router.push('./record');
-          } catch (uploadError) {
-            console.error("Upload failed:", uploadError);
-          }
-        }
-      }
-
-    } catch (error) {
-      console.error("Error picking image:", error);
+  const handleLogin = async () => {
+    if (username.trim() !== '' && password.trim() !== '') {
+      setIsLoading(true);
+      
+      // 1 second loading delay
+      setTimeout(() => {
+        setIsLoading(false);
+        // Navigate to index page
+        router.push('./home');
+      }, 1000);
     }
-  }
+  };
 
-  const pickAndUploadDocument = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: 'application/pdf', // Allows all document types
-      });
-
-      if (result.canceled) {
-        console.log('Document picker was canceled');
-        return;
-      }
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const asset = result.assets[0];
-        
-        try {
-          const response = await uploadDocument(
-            asset.uri,
-            asset.mimeType ?? 'application/octet-stream',
-            asset.name ?? 'upload.pdf'
-          );
-
-          //routing done here upon succesful upload
-          router.push('./record');
-        } catch (uploadError) {
-          console.error("Upload failed:", uploadError);
-        }
-      }
-
-    } catch (error) {
-      console.error("Error picking document:", error);
-    }
-  }
-
-  const routeToChatBot = () => {
-    router.push('./chatbot')
-  }
-
-  const routeToPayment = () => {
-    router.push('./payment')
-  }
+  const isLoginDisabled = (): boolean => {
+    return !username.trim() || !password.trim() || isLoading;
+  };
 
   return (
-  <View style={styles.container}>
-    <StatusBar barStyle="light-content" backgroundColor="#1a237e" />
     <LinearGradient
-      colors={['#00bcd4', '#3949ab', '#1a237e']}
+      colors={['#E879F9', '#EC4899', '#A855F7']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.gradient}
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <Image style={styles.logo}
-          source={require('../assets/images/jondaxicon.png')}
-        />
-        <View style={styles.header}>
-          <Text style={styles.tagline}>
-            Unlock the full potential of your health data
-          </Text>
+    > 
+      <SafeAreaView style={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.logoContainer}>
+            <View style={styles.heartContainer}>
+              <Ionicons name="heart" size={64} color="white" />
+              <View style={styles.heartDot} />
+            </View>
+            <Text style={styles.logoText}>jonda</Text>
+          </View>
+
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                placeholderTextColor="rgba(255, 255, 255, 0.7)"
+                value={username}
+                onChangeText={setUsername}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isLoading}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={[styles.input, styles.passwordInput]}
+                placeholder="Password"
+                placeholderTextColor="rgba(255, 255, 255, 0.7)"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isLoading}
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
+              >
+                <Ionicons
+                  name={showPassword ? 'eye-off' : 'eye'}
+                  size={20}
+                  color="rgba(255, 255, 255, 0.7)"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={[
+                styles.loginButton,
+                isLoginDisabled() ? styles.loginButtonDisabled : styles.loginButtonEnabled
+              ]}
+              onPress={handleLogin}
+              disabled={isLoginDisabled()}
+              activeOpacity={0.8}
+            >
+              {isLoading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="small" color="#EC4899" />
+                  <Text style={styles.loadingText}>Logging in...</Text>
+                </View>
+              ) : (
+                <Text style={[
+                  styles.loginButtonText,
+                  isLoginDisabled() ? styles.loginButtonTextDisabled : styles.loginButtonTextEnabled
+                ]}>
+                  Log In
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <View style={styles.optionsContainer}>
+              <TouchableOpacity style={styles.forgotPassword} disabled={isLoading}>
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
+              
+              <View style={styles.signUpContainer}>
+                <Text style={styles.signUpText}>Don't have an account? </Text>
+                <TouchableOpacity disabled={isLoading}>
+                  <Text style={styles.signUpLink}>Sign Up</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         </View>
 
-        <View style={styles.content}>
-          <View style={styles.buttonContainer}>
-            {/*upload form gallery button*/}
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => userUploadImage(true)}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
-              >
-                <View style={styles.buttonContent}>
-                  <Ionicons name="image" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Upload from Gallery
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Select health images from your device
-                  </Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => userUploadImage(false)}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
-              >
-                <View style={styles.buttonContent}>
-                  <Ionicons name="camera" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Capture & Upload
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Take a photo of your health data
-                  </Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={pickAndUploadDocument}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
-              >
-                <View style={styles.buttonContent}>
-                  <Ionicons name="document-text" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Upload Document
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Import medical records & reports
-                  </Text>
-                </View>
-
-              </LinearGradient>
-
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={routeToChatBot}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
-              >
-                <View style={styles.buttonContent}>
-                  <Octicons name="dependabot" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Chat with us
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Get more out of JondaX with our AI agent
-                  </Text>
-                </View>
-
-              </LinearGradient>
-
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={routeToPayment}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#e91e63', '#ad1457']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.buttonGradient}
-              >
-                <View style={styles.buttonContent}>
-                  <Octicons name="dependabot" size={24} color="white" />
-                  <Text style={styles.buttonText}>
-                    Make Payment
-                  </Text>
-                  <Text style={styles.buttonSubtext}>
-                    Use the Stripe payment method
-                  </Text>
-                </View>
-
-              </LinearGradient>
-
-            </TouchableOpacity>
-
-          </View>
+        <View style={styles.waveContainer}>
+          <View style={styles.wave} />
         </View>
       </SafeAreaView>
     </LinearGradient>
-  </View>
   );
-}
-  
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
   gradient: {
     flex: 1,
   },
-  header: {
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  logo: {
-    marginTop: 40,
-    marginBottom: 10,
-    width: 300,
-    height: 91,
-    alignSelf: 'center',
-  },
-  tagline: {
-    fontSize: 18,
-    color: 'rgba(255, 255, 255, 0.9)',
-    textAlign: 'center',
-    lineHeight: 24,
-    fontWeight: '300',
-    paddingHorizontal: 20,
+  container: {
+    flex: 1,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 80,
   },
-  buttonContainer: {
-    gap:20,
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 48,
   },
-  actionButton: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    elevation: 8,
+  heartContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  heartDot: {
+    position: 'absolute',
+    width: 16,
+    height: 16,
+    backgroundColor: '#F8BBD9',
+    borderRadius: 8,
+  },
+  logoText: {
+    fontSize: 36,
+    fontWeight: '300',
+    color: 'white',
+    letterSpacing: 1,
+  },
+  formContainer: {
+    width: '100%',
+    maxWidth: 320,
+  },
+  inputContainer: {
+    position: 'relative',
+    marginBottom: 16,
+  },
+  input: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    fontSize: 16,
+    color: 'white',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  passwordInput: {
+    paddingRight: 56,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 16,
+    top: '50%',
+    transform: [{ translateY: -10 }],
+    padding: 4,
+  },
+  loginButton: {
+    borderRadius: 24,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 24,
+    minHeight: 56,
+    justifyContent: 'center',
+  },
+  loginButtonEnabled: {
+    backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
+    elevation: 8,
   },
-  buttonGradient: {
-    paddingVertical: 15,
-    paddingHorizontal: 24,
+  loginButtonDisabled: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
-  buttonContent: {
-    alignItems: 'center',
-    gap: 8,
-  },
-  buttonText: {
-    color: 'white',
+  loginButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    textAlign: 'center',
   },
-  buttonSubtext: {
+  loginButtonTextEnabled: {
+    color: '#EC4899',
+  },
+  loginButtonTextDisabled: {
+    color: 'rgba(255, 255, 255, 0.5)',
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    color: '#EC4899',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  optionsContainer: {
+    alignItems: 'center',
+    paddingTop: 16,
+  },
+  forgotPassword: {
+    marginBottom: 16,
+  },
+  forgotPasswordText: {
     color: 'rgba(255, 255, 255, 0.8)',
     fontSize: 14,
-    textAlign: 'center',
-    fontWeight: '300',
   },
-  footer: {
-    paddingBottom: 40,
-    paddingHorizontal: 20,
+  signUpContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  pilotButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+  signUpText: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 14,
   },
-  pilotButtonText: {
+  signUpLink: {
     color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  waveContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+    opacity: 0.3,
+  },
+  wave: {
+    flex: 1,
+    borderTopLeftRadius: width,
+    borderTopRightRadius: width,
+    transform: [{ scaleX: 2 }],
   },
 });
