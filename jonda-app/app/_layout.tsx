@@ -28,7 +28,7 @@ export default function RootLayout() {
    */
   const fetchPublishableKey = async (): Promise<void> => {
     try {
-      const response = await fetch('https://tested-expenses-compliance-september.trycloudflare.com/config', {
+      const response = await fetch('https://registration-harassment-sh-wave.trycloudflare.com/config', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

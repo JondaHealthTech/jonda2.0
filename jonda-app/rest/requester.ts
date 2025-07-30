@@ -12,7 +12,7 @@ export const uploadImage = async(
     } as any);
 
     try {
-        const response = await fetch('https://distance-patents-landing-sitemap.trycloudflare.com/upload', {
+        const response = await fetch('https://registration-harassment-sh-wave.trycloudflare.com/upload', {
             method: 'POST',
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -46,7 +46,7 @@ export const uploadDocument = async(
     } as any);
 
     try {
-        const response = await fetch('https://distance-patents-landing-sitemap.trycloudflare.com/upload', {
+        const response = await fetch('https://registration-harassment-sh-wave.trycloudflare.com/upload', {
             method: 'POST',
             headers: {
                 'Content-Type': 'multipart/form-data',

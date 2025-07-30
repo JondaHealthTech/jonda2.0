@@ -21,11 +21,6 @@ import { getDadJoke } from "../rest/requester";
 
 const { width } = Dimensions.get('window');
 
-/**
- * Interface defining the structure of a chat message
- * 
- * @description Defines the shape of message objects used throughout the chat interface
- */
 interface Message {
     id: number;
     type: string;
@@ -34,25 +29,6 @@ interface Message {
     timestamp: string;
 }
 
-/**
- * Chatbot Component
- * 
- * @description A comprehensive chat interface that supports both text and voice messaging.
- * Features include speech recognition, message timestamps, and animated gradients.
- * 
- * @component
- * @example
- * // Used in navigation stack
- * <Stack.Screen name="chatbot" component={Chatbot} />
- * 
- * Key Features:
- * - Text messaging with real-time input
- * - Voice recognition with long-press activation
- * - Message history with timestamps
- * - Animated gradient backgrounds
- * - Bot responses via dad joke API
- * - Cross-platform keyboard handling
- */
 export default function Chatbot() {
     // Message state and management
     const [messages, setMessages] = useState<Message[]>([
@@ -74,11 +50,10 @@ export default function Chatbot() {
     const [recognizing, setRecognizing] = useState(false);
     const speechCaptured = useRef<boolean>(false);
     const speechMessageId = useRef<number>(0);
+    
+    // ADD THIS: Track if speech recognition was intentionally started
+    const speechIntentionallyStarted = useRef<boolean>(false);
 
-    /**
-     * @description Generates the next unique message ID
-     * @returns {number} Next available message ID
-     */
     const getNextMessageId = (): number => {
         const id = messageIdCounter.current;
         messageIdCounter.current += 1;
@@ -87,27 +62,24 @@ export default function Chatbot() {
 
     // Speech recognition event handlers
     
-    /**
-     * @description Handles speech recognition start event. Sets recognizing state to true
-     */
     useSpeechRecognitionEvent("start", () => {
         console.log('Speech recognition started');
         setRecognizing(true);
     });
 
-    /**
-     * @description Handles speech recognition end event. Resets states and triggers bot response
-     */
+    // MODIFIED: Only get bot response if speech was intentionally started
     useSpeechRecognitionEvent("end", async () => {
-        console.log('Speech recognition ended');
+        console.log('Speech recognition ended. Intentionally started:', speechIntentionallyStarted.current);
         setRecognizing(false);
         speechCaptured.current = false;
-        await getBotResponse();
+        
+        // Only get bot response if speech recognition was intentionally triggered
+        if (speechIntentionallyStarted.current) {
+            speechIntentionallyStarted.current = false; // Reset the flag
+            await getBotResponse();
+        }
     });
 
-    /**
-     * @description Handles speech recognition results. Creates or updates voice messages based on transcription
-     */
     useSpeechRecognitionEvent("result", (event) => {
         console.log('Speech results:', event);
 
@@ -130,20 +102,13 @@ export default function Chatbot() {
         }
     });
 
-    /**
-     * @description Handles speech recognition errors. Resets recognition state on error
-     */
     useSpeechRecognitionEvent("error", (event) => {
         console.error('Speech recognition error:', event.error, event.message);
         setRecognizing(false);
         speechCaptured.current = false;
+        speechIntentionallyStarted.current = false; // Reset flag on error
     });
 
-    /**
-     * @description Edits an existing message with new text
-     * @param {number} messageId - ID of message to edit
-     * @param {string} newText - New text content
-     */
     const editMessage = (messageId: number, newText: string) => {
         console.log('Editing message:', messageId, newText);
         setMessages(prevMessages => 
@@ -155,9 +120,6 @@ export default function Chatbot() {
         );
     };
 
-    /**
-     * @description Sends a text message from user input. Clears input field and triggers bot response
-     */
     const sendTextMessage = async () => {
         if (inputText.trim()) {
             const newMessage: Message = {
@@ -171,14 +133,12 @@ export default function Chatbot() {
             setInputText('');
             scrollToBottom();
 
-            // Simulate a response from the chatbot
+            // Get bot response for text messages
             await getBotResponse();
         }
     };
 
-    /**
-     * @description Initiates speech recognition. Requests permissions and starts listening
-     */
+    // MODIFIED: Set the intentional flag when starting speech recognition
     const startListening = async () => {
         console.log('Starting voice recognition...');
         try {
@@ -188,6 +148,9 @@ export default function Chatbot() {
                 return;
             }
             
+            // Set flag to indicate speech recognition was intentionally started
+            speechIntentionallyStarted.current = true;
+            
             // Start speech recognition
             ExpoSpeechRecognitionModule.start({
                 lang: "en-US",
@@ -196,12 +159,10 @@ export default function Chatbot() {
             });
         } catch (error) {
             console.error('Error starting voice recognition:', error);
+            speechIntentionallyStarted.current = false; // Reset flag on error
         }
     };
 
-    /**
-     * @description Stops speech recognition
-     */
     const stopListening = async () => {
         try {
             ExpoSpeechRecognitionModule.stop();
@@ -210,11 +171,6 @@ export default function Chatbot() {
         }
     };
 
-    /**
-     * @description Creates a voice message from speech transcript
-     * @param {string} transcript - Speech-to-text result
-     * @returns {number} Message ID or 0 if failed
-     */
     const sendVoiceMessage = (transcript: string): number => {
         if (transcript.trim()) {
             const newId = getNextMessageId();
@@ -233,9 +189,6 @@ export default function Chatbot() {
         return 0;
     };
 
-    /**
-     * @description Fetches and displays bot response. Currently uses dad joke API as placeholder
-     */
     const getBotResponse = async () => {
         try {
             const response: string = await getDadJoke();
@@ -254,28 +207,17 @@ export default function Chatbot() {
         }
     };
 
-    /**
-     * @description Scrolls chat to bottom (most recent messages)
-     */
     const scrollToBottom = (): void => {
         setTimeout(() => {
             flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
         }, 100);
     };
 
-    /**
-     * @description Formats timestamp for display
-     * @param {string} timestamp - ISO timestamp string
-     * @returns {string} Formatted time string (HH:MM)
-     */
     const formatTime = (timestamp: string): string => {
         const date = new Date(timestamp);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
-    /**
-     * @description Renders individual message bubbles. Handles both text and voice message types
-     */
     const renderMessage: ListRenderItem<Message> = ({ item }) => {
         const isMe = item.sender === 'me';
         
@@ -329,7 +271,6 @@ export default function Chatbot() {
                 end={{ x: 1, y: 1 }}
                 style={styles.gradient}
             >
-                {/* Messages List - Inverted to show latest at bottom */}
                 <FlatList
                     ref={flatListRef}
                     data={[...messages].reverse()}
@@ -340,7 +281,6 @@ export default function Chatbot() {
                     showsVerticalScrollIndicator={false}
                 />
 
-                {/* Input Container - Text input and send/voice button */}
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.textInput}
@@ -352,7 +292,6 @@ export default function Chatbot() {
                         onSubmitEditing={sendTextMessage}
                     />
                         
-                    {/* Multi-function button: Send text or voice recording */}
                     <TouchableOpacity 
                         style={[
                             styles.msgButton,
@@ -375,25 +314,6 @@ export default function Chatbot() {
     );
 }
 
-/**
- * Styles for the Chatbot component
- * 
- * @description Layout Structure:
- * - Container: Full screen with gradient background
- * - Messages: Inverted FlatList for chat-like experience
- * - Input: Fixed bottom container with text input and action button
- * 
- * Message Styling:
- * - Gradient bubbles with rounded corners
- * - Different colors for user vs bot messages
- * - Timestamps aligned to message end
- * - Voice messages include microphone icon
- * 
- * Interactive Elements:
- * - Button changes color when recording
- * - Keyboard avoiding behavior for better UX
- * - Touch feedback on all interactive elements
- */
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -469,7 +389,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     msgButtonRecording: {
-        backgroundColor: '#FF3B30', // Red color when recording
+        backgroundColor: '#FF3B30',
     },
     playButton: {
         width: 30,

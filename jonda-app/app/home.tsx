@@ -41,7 +41,7 @@ export default function Home() {
      */
     const fetchPaymentSheetParams = async () => {
         try {
-            const response = await fetch('https://tested-expenses-compliance-september.trycloudflare.com/create-payment-intent', {
+            const response = await fetch('https://registration-harassment-sh-wave.trycloudflare.com/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
